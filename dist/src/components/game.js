@@ -63,7 +63,8 @@ var Game = function (_Component) {
       word: null,
       fetchingWord: true,
       guessVector: [],
-      message: null
+      message: null,
+      messageColor: null
     };
     return _this;
   }
@@ -161,7 +162,11 @@ var Game = function (_Component) {
         guessVector: []
       });
       // display
-      this.showMessage(didWin ? 'You won!' : 'You lost. The word was "' + word + '"...', 5);
+      if (didWin) {
+        this.showMessage('You won!', 5, 'green');
+      } else {
+        this.showMessage('You lost. The word was "' + word + '"...', 5, 'red');
+      }
     }
   }, {
     key: 'onTick',
@@ -178,12 +183,12 @@ var Game = function (_Component) {
     }
   }, {
     key: 'showMessage',
-    value: function showMessage(message, seconds) {
+    value: function showMessage(message, seconds, messageColor) {
       // cancel existing timeouts
       clearTimeout(this.messageTimeout);
       this.hideMessage();
       // show next message
-      this.setState({ message: message });
+      this.setState({ message: message, messageColor: messageColor });
       this.messageTimeout = setTimeout(this.hideMessage.bind(this), seconds * 1000);
     }
   }, {
@@ -194,19 +199,25 @@ var Game = function (_Component) {
   }, {
     key: 'makeGuess',
     value: function makeGuess(char) {
+      var _this3 = this;
+
       var _state = this.state,
           guessVector = _state.guessVector,
           word = _state.word,
           lives = _state.lives;
 
       if (guessVector.includes(char)) {
-        return this.showMessage('You\'ve already tried ' + char + '!', 2);
+        return this.showMessage('You\'ve already tried ' + char + '!', 2, 'yellow');
       }
       // add new char
       this.setState({ guessVector: [].concat((0, _toConsumableArray3.default)(guessVector), [char]) });
       // increment score | decrement lives
-      if (!word.includes()) {
+      if (!word.includes(char)) {
         return lives > 0 ? this.setState({ lives: lives - 1 }) : this.endRound();
+      } else if (word.split('').every(function (c) {
+        return _this3.state.guessVector.includes(c);
+      })) {
+        this.endRound(true);
       }
     }
   }, {
@@ -219,7 +230,8 @@ var Game = function (_Component) {
           seconds = _state2.seconds,
           guessVector = _state2.guessVector,
           lives = _state2.lives,
-          message = _state2.message;
+          message = _state2.message,
+          messageColor = _state2.messageColor;
 
       return _react2.default.createElement(
         'box',
@@ -250,7 +262,7 @@ var Game = function (_Component) {
           {
             top: '5%',
             left: 'center',
-            style: { fg: 'red' }
+            style: { fg: messageColor }
           },
           message
         ),
