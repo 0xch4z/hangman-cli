@@ -18,10 +18,10 @@
     "babel-preset-stage-0": "^6.24.1"
   },
   "dependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.18.0",
     "blessed": "^0.1.81",
     "prop-types": "^15.6.0",
-    "react": "^0.14.9",
-    "react-blessed": "^0.2.0"
+    "react": "^16.8.6",
+    "react-blessed": "^0.6.0"
   }
 }
